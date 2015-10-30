@@ -3,9 +3,14 @@ angular.module('app.dashboard').controller('WidgetSettingsModal', WidgetSettings
 WidgetSettingsModalController.$inject = ['$uibModalInstance', 'LocalStorage'];
 function WidgetSettingsModalController($uibModalInstance, LocalStorage) {
     var vm = this;
-    var storage = LocalStorage('widgetInfo');
+    var storage = LocalStorage('');
 
-    vm.widgetSettings = storage.get('', {});
+    vm.widgetSettings = storage.get('widgetInfo', {});
+    vm.notificationSettings = storage.get('notificationSettings', {
+        enabled: false,
+        openOnClick: false,
+        sound: false,
+    });
 
     vm.saveModal = saveModal;
     vm.closeModal = closeModal;
@@ -14,7 +19,8 @@ function WidgetSettingsModalController($uibModalInstance, LocalStorage) {
 
     function saveModal() {
         // Store the widget settings
-        storage.put('', vm.widgetSettings);
+        storage.put('widgetInfo', vm.widgetSettings);
+        storage.put('notificationSettings', vm.notificationSettings);
 
         $uibModalInstance.close();
     }

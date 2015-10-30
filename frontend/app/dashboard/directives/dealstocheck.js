@@ -10,8 +10,8 @@ function dealsToCheckDirective() {
     };
 }
 
-DealsToCheckController.$inject = ['$scope', 'LocalStorage', 'Deal', 'UserTeams'];
-function DealsToCheckController($scope, LocalStorage, Deal, UserTeams) {
+DealsToCheckController.$inject = ['$scope', 'LocalStorage', 'Deal', 'Settings', 'UserTeams', '$timeout'];
+function DealsToCheckController($scope, LocalStorage, Deal, Settings, UserTeams, $timeout) {
     var storage = LocalStorage('dealsToCheckkWidget');
     var vm = this;
 
@@ -25,6 +25,7 @@ function DealsToCheckController($scope, LocalStorage, Deal, UserTeams) {
         selectedUserId: storage.get('selectedUserId'),
     };
     vm.markDealAsChecked = markDealAsChecked;
+    vm.itemCount;
     activate();
 
     ///////////
@@ -32,6 +33,16 @@ function DealsToCheckController($scope, LocalStorage, Deal, UserTeams) {
     function activate() {
         _watchTable();
         _getUsers();
+
+        if (Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
+
+        (function tick() {
+            _getDealsToCheck();
+            //$timeout(tick, 300000); // Check for new deals every 5 minutes
+            $timeout(tick, 3000);
+        })();
     }
 
     function _getDealsToCheck() {
@@ -44,6 +55,28 @@ function DealsToCheckController($scope, LocalStorage, Deal, UserTeams) {
 
             var dealPromise = Deal.getDeals('', 1, 20, vm.table.order.column, vm.table.order.descending, filterQuery);
             dealPromise.then(function(deals) {
+                if (Settings.notifications.enabled && Notification.permission === 'granted' ) {
+                    if (typeof vm.itemCount !== 'undefined') {
+                        console.log(vm.itemCount);
+                        if (deals.length > vm.itemCount) {
+                            var notificationBody = deals.length - vm.itemCount + ' new deals added';
+                            var notificationOptions = {
+                                icon: 'https://avatars2.githubusercontent.com/u/1502491?v=3&s=200',
+                                body: notificationBody,
+                            };
+
+                            var notification = new Notification('Lily dashboard notification', notificationOptions);
+                            notification.onclick = function() {
+                                window.focus();
+                            };
+
+                            vm.itemCount = deals.length;
+                        }
+                    } else {
+                        vm.itemCount = deals.length;
+                    }
+                }
+
                 vm.table.items = deals;
             });
         }
