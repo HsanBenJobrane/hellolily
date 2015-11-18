@@ -36,6 +36,10 @@ function DealsToCheckController($scope, LocalStorage, Deal, Settings, UserTeams,
 
         if (Notification.permission !== 'denied') {
             Notification.requestPermission();
+
+            if (Notification.permission === 'granted') {
+                Settings.notifications.enabled = true;
+            }
         }
 
         (function tick() {
@@ -66,9 +70,12 @@ function DealsToCheckController($scope, LocalStorage, Deal, Settings, UserTeams,
                             };
 
                             var notification = new Notification('Lily dashboard notification', notificationOptions);
-                            notification.onclick = function() {
-                                window.focus();
-                            };
+
+                            if (Settings.notifications.openOnClick) {
+                                notification.onclick = function() {
+                                    window.focus();
+                                };
+                            }
 
                             vm.itemCount = deals.length;
                         }

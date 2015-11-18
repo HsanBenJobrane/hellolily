@@ -1,7 +1,9 @@
 angular.module('app.services').factory('Settings', Settings);
 
-Settings.$inject = [];
-function Settings() {
+Settings.$inject = ['LocalStorage'];
+function Settings(LocalStorage) {
+    var storage = LocalStorage('');
+
     var Settings = {
         page: {
             title: 'Welcome',
@@ -24,6 +26,11 @@ function Settings() {
             accountId: false,
             contactId: false,
         },
+        notifications: storage.get('notificationSettings', {
+            enabled: false,
+            openOnClick: false,
+            sound: false,
+        }),
     };
 
     function setTitle(pageType, newTitle) {

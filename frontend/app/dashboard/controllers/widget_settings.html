@@ -26,14 +26,16 @@
                     </div>
                     <label for="notificationSettingsEnabled">Enable widget notifications</label>
                 </li>
-                <li ng-if="vm.notificationSettings.enabled">
-                    <div class="checker">
-                        <span ng-class="{'checked': vm.notificationSettings.openOnClick}">
-                             <input id="widgetNotificationsOpenPage" type="checkbox" data-skip-uniform ng-model="vm.notificationSettings.openOnClick" ng-false-value="0" ng-true-value="1">
-                        </span>
-                    </div>
-                    <label for="widgetNotificationsOpenPage">Go to website on click</label>
-                </li>
+                <ul ng-if="vm.notificationSettings.enabled" class="list-no-style">
+                    <li>
+                        <div class="checker">
+                            <span ng-class="{'checked': vm.notificationSettings.openOnClick}">
+                                 <input id="widgetNotificationsOpenPage" type="checkbox" data-skip-uniform ng-model="vm.notificationSettings.openOnClick" ng-false-value="0" ng-true-value="1">
+                            </span>
+                        </div>
+                        <label for="widgetNotificationsOpenPage">Go to website on click</label>
+                    </li>
+                </ul>
             </ul>
         </div>
     </div>
