@@ -39,9 +39,9 @@ function accountConfig($stateProvider) {
  */
 angular.module('app.accounts').controller('AccountCreateController', AccountCreateController);
 
-AccountCreateController.$inject = ['$scope', '$state', '$stateParams', 'Settings', 'Account', 'User', 'HLFields',
+AccountCreateController.$inject = ['$scope', '$state', '$stateParams', '$timeout', 'Settings', 'Account', 'User', 'HLFields',
     'HLForms', 'HLUtils'];
-function AccountCreateController($scope, $state, $stateParams, Settings, Account, User, HLFields, HLForms, HLUtils) {
+function AccountCreateController($scope, $state, $stateParams, $timeout, Settings, Account, User, HLFields, HLForms, HLUtils) {
     var vm = this;
 
     vm.account = {};
@@ -86,6 +86,12 @@ function AccountCreateController($scope, $state, $stateParams, Settings, Account
             // Getting the statusses includes which status is the default for a new account,
             // so get (or create) the account afterwards.
             _getAccount();
+        });
+
+        $timeout(function() {
+            // Focus the first input on page load.
+            angular.element('input')[0].focus();
+            $scope.$apply();
         });
     }
 
