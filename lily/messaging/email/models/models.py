@@ -189,7 +189,7 @@ class EmailMessage(models.Model):
         from ..utils import create_a_beautiful_soup_object
         """
         Return an version of the body which is used for replies or forwards.
-        This is preferably the html part, but in case that doesn't exist we use the text part
+        This is preferably the html part, but in case that doesn't exist we use the text part.
         """
         if self.body_html:
             # In case of html, wrap body in blockquote tag.
@@ -221,6 +221,14 @@ class EmailMessage(models.Model):
     def is_starred(self):
         for label in self.labels.all():
             if label.label_id == 'STARRED':
+                return True
+
+        return False
+
+    @property
+    def is_draft(self):
+        for label in self.labels.all():
+            if label.label_id == 'DRAFT':
                 return True
 
         return False
