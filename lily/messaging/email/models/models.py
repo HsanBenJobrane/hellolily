@@ -218,20 +218,16 @@ class EmailMessage(models.Model):
             return ''
 
     @property
-    def is_starred(self):
-        for label in self.labels.all():
-            if label.label_id == 'STARRED':
-                return True
+    def is_trashed(self):
+        return self.labels.filter(label_id='TRASH').count() == 1
 
-        return False
+    @property
+    def is_starred(self):
+        return self.labels.filter(label_id='STARRED').count() == 1
 
     @property
     def is_draft(self):
-        for label in self.labels.all():
-            if label.label_id == 'DRAFT':
-                return True
-
-        return False
+        return self.labels.filter(label_id='DRAFT').count() == 1
 
     def get_message_id(self):
         header = self.headers.filter(name__icontains='message-id').first()

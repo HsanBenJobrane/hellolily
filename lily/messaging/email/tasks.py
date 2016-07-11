@@ -257,11 +257,7 @@ def delete_email_message(email_id):
     try:
         email_message = EmailMessage.objects.get(pk=email_id)
         removed = email_message.is_removed
-        in_trash = False
-        for label in email_message.labels.all():
-            if label.name == 'TRASH':
-                in_trash = True
-                break
+        in_trash = email_message.is_trashed
         email_message.is_removed = True
         email_message.save()
     except EmailMessage.DoesNotExist:
@@ -269,7 +265,7 @@ def delete_email_message(email_id):
     else:
         manager = GmailManager(email_message.account)
         try:
-            if removed is False or in_trash is True:
+            if not removed or in_trash:
                 if email_message.is_draft:
                     manager.delete_draft_email_message(email_message)
                 else:

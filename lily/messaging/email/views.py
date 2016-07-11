@@ -199,7 +199,7 @@ class EmailAttachmentProxy(View):
 
 
 #
-# EmailMessage compose views (create/edit draft, reply, forward) incl. preview & send message
+# EmailMessage compose views (create/edit draft, reply, forward) incl. preview & send message.
 #
 class EmailMessageComposeView(LoginRequiredMixin, FormView):
     template_name = 'email/emailmessage_compose.html'
@@ -364,10 +364,10 @@ class EmailMessageComposeView(LoginRequiredMixin, FormView):
                 try:
                     DefaultEmailTemplate.objects.get(user=get_current_user())
                 except DefaultEmailTemplate.DoesNotExist:
-                    message = _('Sorry, I couldn\'t load the given template. Please try a different one')
+                    message = _('Sorry, I couldn\'t load the given template. Please try a different one.')
                 else:
                     message = _('Sorry, I couldn\'t load the given template. '
-                                'I\'ll load your default email template instead')
+                                'I\'ll load your default email template instead.')
 
                 messages.warning(self.request, message)
                 template = None
@@ -424,14 +424,14 @@ class EmailMessageComposeView(LoginRequiredMixin, FormView):
         if task.status is not FAILURE:
             messages.info(
                 self.request,
-                _('Gonna deliver your email as fast as I can')
+                _('Gonna deliver your email as fast as I can.')
             )
             self.request.session['tasks'].update({'send_message': task.id})
             self.request.session.modified = True
         else:
             messages.error(
                 self.request,
-                _('Sorry, I couldn\'t send your email')
+                _('Sorry, I couldn\'t send your email.')
             )
             send_logger.error(_('Failed to create send_message task (%s) outbox message id was %d. TRACE: %s') % (
                 task.id, email_outbox_message.id, task.traceback
@@ -448,7 +448,7 @@ class EmailMessageComposeView(LoginRequiredMixin, FormView):
         if not task:
             messages.error(
                 self.request,
-                _('Sorry, I couldn\'t remove your email draft')
+                _('Sorry, I couldn\'t remove your email draft.')
             )
             logging.error(_('Failed to create remove_draft task for email account %d. Draft message id was %d.') % (
                 self.object.send_from, self.object.id
@@ -523,14 +523,14 @@ class EmailMessageDraftView(EmailMessageComposeView):
         if task:
             messages.info(
                 self.request,
-                _('Creating a draft as fast as I can')
+                _('Creating a draft as fast as I can.')
             )
             self.request.session['tasks'].update({'create_draft_email_message': task.id})
             self.request.session.modified = True
         else:
             messages.error(
                 self.request,
-                _('Sorry, I couldn\'t save you email as a draft')
+                _('Sorry, I couldn\'t save you email as a draft.')
             )
             logging.error(
                 _('Failed to create create_draft_email_message task for email account %d. '
@@ -625,14 +625,14 @@ class EmailMessageReplyOrForwardView(EmailMessageComposeView):
         if task:
             messages.info(
                 self.request,
-                _('Sending email as fast as I can')
+                _('Sending email as fast as I can.')
             )
             self.request.session['tasks'].update({'send_message': task.id})
             self.request.session.modified = True
         else:
             messages.error(
                 self.request,
-                _('Sorry, I couldn\'t send your email')
+                _('Sorry, I couldn\'t send your email.')
             )
             logging.error(_('Failed to create %s task for email account %d. Outbox message id was %d.') % (
                 self.action,
@@ -817,7 +817,7 @@ class CreateEmailTemplateView(CreateUpdateEmailTemplateMixin, CreateView):
         response = super(CreateEmailTemplateView, self).form_valid(form)
 
         # Show save messages
-        message = _('%s has been created') % self.object.name
+        message = _('%s has been created.') % self.object.name
         messages.success(self.request, message)
 
         post_intercom_event(event_name='email-template-created', user_id=self.request.user.id)
@@ -831,7 +831,7 @@ class UpdateEmailTemplateView(CreateUpdateEmailTemplateMixin, UpdateView):
         response = super(UpdateEmailTemplateView, self).form_valid(form)
 
         # Show save messages
-        message = _('%s has been updated') % self.object.name
+        message = _('%s has been updated.') % self.object.name
         messages.success(self.request, message)
 
         return response
@@ -887,11 +887,11 @@ class EmailTemplateSetDefaultView(LoginRequiredMixin, FormActionMixin, SuccessMe
         default_for = self.object.default_for.all()
         default_for_length = len(default_for)
         if default_for_length == 0:
-            message = _('%s is no longer a default template' % self.object)
+            message = _('%s is no longer a default template.' % self.object)
         elif default_for_length == 1:
-            message = _('%s has been set as default for: %s' % (self.object, default_for[0]))
+            message = _('%s has been set as default for: %s.' % (self.object, default_for[0]))
         else:
-            message = _('%s has been set as default for: %s and %s others' % (
+            message = _('%s has been set as default for: %s and %s others.' % (
                 self.object, default_for[0], default_for_length - 1
             ))
         return message
@@ -1049,7 +1049,7 @@ class CreateTemplateVariableView(CreateUpdateTemplateVariableMixin, CreateView):
         response = super(CreateTemplateVariableView, self).form_valid(form)
 
         # Show save messages
-        message = _('%s has been created') % self.object.name
+        message = _('%s has been created.') % self.object.name
         messages.success(self.request, message)
 
         post_intercom_event(event_name='email-variable-created', user_id=self.request.user.id)
@@ -1073,7 +1073,7 @@ class UpdateTemplateVariableView(CreateUpdateTemplateVariableMixin, UpdateView):
         response = super(UpdateTemplateVariableView, self).form_valid(form)
 
         # Show save messages
-        message = _('%s has been updated') % self.object.name
+        message = _('%s has been updated.') % self.object.name
         messages.success(self.request, message)
 
         return response
