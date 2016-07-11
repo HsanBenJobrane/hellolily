@@ -434,6 +434,7 @@ class GmailManager(object):
             email_message (instance): EmailMessage instance
         """
         self.connector.delete_draft_email_message(email_message.draft_id)
+        self.update_unread_count()
 
     def cleanup(self):
         """
