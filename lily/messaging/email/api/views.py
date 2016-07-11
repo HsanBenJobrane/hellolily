@@ -246,6 +246,33 @@ class EmailMessageViewSet(mixins.RetrieveModelMixin,
 
         return Response(serializer.data)
 
+    @detail_route(methods=['put'])
+    def spam(self, request, pk=None):
+        """
+        Any modifications are passed through the manager and not directly on the db.
+
+        Mark as spam will happen async.
+        """
+        email = self.get_object()
+        serializer = self.get_serializer(email, partial=True)
+
+        add_labels = ['SPAM']
+
+        remove_labels = []
+
+        for label in email.labels.all():
+            remove_labels.append(label.name)
+
+        add_and_remove_labels_for_message.delay(
+            email.id,
+            add_labels=add_labels,
+            remove_labels=remove_labels,
+        )
+
+        print serializer.data
+
+        return Response(serializer.data)
+
     @detail_route(methods=['get'])
     def history(self, request, pk):
         """
