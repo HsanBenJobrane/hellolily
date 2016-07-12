@@ -202,7 +202,7 @@ class GmailConnector(object):
 
     def get_short_message_info(self, message_id):
         """
-        Fetch labels & threadId for given message
+        Fetch labels & threadId for given message.
 
         Args:
             message_id (string): id of the message
@@ -210,12 +210,19 @@ class GmailConnector(object):
         Returns:
             dict with message info, with threadId & labels
         """
-        return self.execute_service_call(self.service.users().messages().get(
-            userId='me',
-            id=message_id,
-            fields='labelIds,threadId',
-            quotaUser=self.email_account.id,
-        ))
+        try:
+            return self.execute_service_call(self.service.users().messages().get(
+                userId='me',
+                id=message_id,
+                fields='labelIds,threadId',
+                quotaUser=self.email_account.id,
+            ))
+        except HttpError as e:
+            content = anyjson.loads(e.content)
+            if content.get('error', {}).get('code') == 404:
+                raise MessageNotFoundError
+            else:
+                raise ConnectorError
 
     def save_history_id(self):
         """
