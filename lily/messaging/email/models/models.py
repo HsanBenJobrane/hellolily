@@ -219,15 +219,15 @@ class EmailMessage(models.Model):
 
     @property
     def is_trashed(self):
-        return self.labels.filter(label_id='TRASH').count() == 1
+        return self.labels.filter(label_id=settings.GMAIL_LABEL_TRASH).count() == 1
 
     @property
     def is_starred(self):
-        return self.labels.filter(label_id='STARRED').count() == 1
+        return self.labels.filter(label_id=settings.GMAIL_LABEL_STARRED).count() == 1
 
     @property
     def is_draft(self):
-        return self.labels.filter(label_id='DRAFT').count() == 1
+        return self.labels.filter(label_id=settings.GMAIL_LABEL_DRAFT).count() == 1
 
     def get_message_id(self):
         header = self.headers.filter(name__icontains='message-id').first()

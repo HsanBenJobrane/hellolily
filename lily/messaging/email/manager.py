@@ -232,7 +232,7 @@ class GmailManager(object):
         # Check if existing labels differ from new labels
         existing_labels = set(email_message.labels.all().values_list('label_id', flat=True))
         if not email_message.read:
-            existing_labels.add(settings.GMAIL_UNREAD_LABEL)
+            existing_labels.add(settings.GMAIL_LABEL_UNREAD)
 
         new_labels = set(message_info.get('labelIds', []))
         if len(new_labels ^ existing_labels):
@@ -271,19 +271,19 @@ class GmailManager(object):
                 labels['removeLabelIds'] = message_info['labelIds']
             else:
                 for label in remove_labels:
-                    if label in message_info.get('labelIds', []) and label != settings.GMAIL_SENT_LABEL:
+                    if label in message_info.get('labelIds', []) and label != settings.GMAIL_LABEL_SENT:
                         labels.setdefault('removeLabelIds', []).append(label)
                         removed_labels.append(label)
 
             added_labels = []
             for label in add_labels:
                 # Temporary set traceback in logging to find out what triggers adding SENT label
-                if label == settings.GMAIL_SENT_LABEL:
+                if label == settings.GMAIL_LABEL_SENT:
                     logger.warning('trying to add label SENT: %s' % traceback.print_stack())
                 # UNREAD isn't added to the database as an available label, so do a separate check
-                if label not in message_info.get('labelIds', []) and label != settings.GMAIL_SENT_LABEL:
+                if label not in message_info.get('labelIds', []) and label != settings.GMAIL_LABEL_SENT:
                     if (email_message.account.labels.filter(label_id=label).exists() or
-                            label == settings.GMAIL_UNREAD_LABEL):
+                            label == settings.GMAIL_LABEL_UNREAD):
                         labels.setdefault('addLabelIds', []).append(label)
                         added_labels.append(label)
 
@@ -320,9 +320,9 @@ class GmailManager(object):
             read (bool, optional): If True, mark message as read
         """
         if read:
-            self.add_and_remove_labels_for_message(email_message, remove_labels=[settings.GMAIL_UNREAD_LABEL])
+            self.add_and_remove_labels_for_message(email_message, remove_labels=[settings.GMAIL_LABEL_UNREAD])
         else:
-            self.add_and_remove_labels_for_message(email_message, add_labels=[settings.GMAIL_UNREAD_LABEL])
+            self.add_and_remove_labels_for_message(email_message, add_labels=[settings.GMAIL_LABEL_UNREAD])
 
     def archive_email_message(self, email_message):
         """
